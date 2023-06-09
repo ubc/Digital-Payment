@@ -1,0 +1,4 @@
+/** Gravity sets the readonly fields to not have pointer events, which causes problem for users to select the text. **/
+input:read-only {
+    pointer-events: visible !important;
+}
