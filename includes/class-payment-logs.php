@@ -33,8 +33,8 @@ class Payment_Logs {
 					'name'          => __( 'E-Payment Logs', 'ubc-dpp' ),
 					'singular_name' => __( 'E-Payment Log', 'ubc-dpp' ),
 				),
-				'public'       => true,
-				'capabilities' => array( 'manage_network' )
+				'public'       => false,
+				'capabilities' => array( 'manage_network' ),
 			)
 		);
 
