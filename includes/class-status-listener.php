@@ -153,7 +153,7 @@ class Status_Listener {
 			}
 
 			if ( array_key_exists( 'paymentGatewayReferenceNumber', $data ) ) {
-				gform_update_meta( $entry['id'], 'payment_gateway_reference_number', $data['paymentGatewayReferenceNumber'] );
+				gform_update_meta( $entry['id'], 'transaction_id', $data['paymentGatewayReferenceNumber'] );
 			}
 			Logger::log( 'Bottom of Success' );
 			return new \WP_REST_Response( array( 'payment_request_number' => $payment_request_number ), 200 );

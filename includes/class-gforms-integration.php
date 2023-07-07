@@ -220,6 +220,15 @@ class Gforms_Integration {
 			'is_default_column'          => false,
 		);
 
+		$entry_meta['transaction_id'] = array(
+			'label'                      => 'Transaction ID',
+			'is_numeric'                 => false,
+			'update_entry_meta_callback' => function ( $key, $entry, $form ) {
+				return gform_get_meta( $entry['id'], 'transaction_id' );
+			},
+			'is_default_column'          => true,
+		);
+
 		return $entry_meta;
 	}//end update_entry_meta()
 }
