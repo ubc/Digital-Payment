@@ -130,8 +130,6 @@ class Payment_Request {
 			$request_url = $this->protocol . '://' . $this->host_name . ( $this->port ? ':' . $this->port : '' ) . $this->base_url . '/payment-request';
 		}
 
-		Logger::log( $response );
-
 		$response = wp_remote_post(
 			$request_url,
 			array(
