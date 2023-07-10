@@ -155,6 +155,12 @@ class Status_Listener {
 			if ( array_key_exists( 'paymentGatewayReferenceNumber', $data ) ) {
 				gform_update_meta( $entry['id'], 'transaction_id', $data['paymentGatewayReferenceNumber'] );
 			}
+
+			// Send notification email out.
+			remove_filter( 'gform_disable_notification', array( 'UBC\CTLT\DPP\Gforms_Integration', 'disabled_notification_on_form_submit' ), 10 );
+			\GFAPI::send_notifications( $form, $entry, 'form_submission' );
+			add_filter( 'gform_disable_notification', array( 'UBC\CTLT\DPP\Gforms_Integration', 'disabled_notification_on_form_submit' ), 10, 5 );
+
 			Logger::log( 'Bottom of Success' );
 			return new \WP_REST_Response( array( 'payment_request_number' => $payment_request_number ), 200 );
 		}

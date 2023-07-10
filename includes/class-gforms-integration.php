@@ -22,7 +22,7 @@ class Gforms_Integration {
 		add_action( 'gform_after_submission', array( __CLASS__, 'after_submission' ), 10, 2 );
 		add_filter( 'template_redirect', array( __CLASS__, 'render_api_response_html' ), 10, 1 );
 		add_filter( 'query_vars', array( __CLASS__, 'add_rewrite_query_vars' ) );
-		add_filter( 'gform_pre_process', array( __CLASS__, 'change_confirmations' ), 10, 1 );
+		add_filter( 'gform_disable_notification', array( __CLASS__, 'disabled_notification_on_form_submit' ), 10, 5 );
 		add_filter( 'gform_entry_meta', array( __CLASS__, 'update_entry_meta' ), 10, 2 );
 
 		// Local development only.
@@ -157,23 +157,18 @@ class Gforms_Integration {
 	}//end add_rewrite_query_vars()
 
 	/**
-	 * Disabled the default notification email for payment forms
+	 * Disabled_notification_on_form_submit.
 	 *
-	 * @since 0.1.0
-	 *
-	 * @param  object $form The form object.
-	 * @return object
+	 * @param  bool  $is_diabled Variable to be filtered. Set it to true to disable admin notifications.
+	 * @param  array $notification Current Notification array.
+	 * @param  Form  $form Current form.
+	 * @param  Entry $entry Current Entry array.
+	 * @param  array $data Array of data which can be used in the notifications via the generic {object:property} merge tag. Defaults to empty array. Since: 2.3.6.6.
+	 * @return bool
 	 */
-	public static function change_confirmations( $form ) {
-
-		// ************************* Payment form check ************************* //
-		if ( ! Helper::is_payment_form( $form ) ) {
-			return $form;
-		}
-
-		unset( $form['notifications'] );
-		return $form;
-	}//end change_confirmations()
+	public static function disabled_notification_on_form_submit( $is_diabled, $notification, $form, $entry, $data ) {
+		return Helper::is_payment_form( $form );
+	}//end disabled_notification_on_form_submit()
 
 	/**
 	 * Update the form entry meta list.
