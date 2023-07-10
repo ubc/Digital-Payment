@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       UBC ePayment(DPP)
  * Description:       Integration with UBC DPP ePayment gateway (uPay).
- * Version:           0.2.2
+ * Version:           0.2.3
  * Requires at least: 5.2
  * Requires PHP:      7.2
  * Author:            Kelvin Xu, Rich Tape
