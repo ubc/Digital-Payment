@@ -17,7 +17,6 @@ class Gforms_Integration {
 	 * Gforms Integration init.
 	 */
 	public static function init() {
-		add_action( 'gform_validation', array( __CLASS__, 'validate_payment_amount' ), 10, 1 );
 		add_action( 'gform_pre_submission', array( __CLASS__, 'disabled_cbm' ), 9, 4 );
 		add_action( 'gform_after_submission', array( __CLASS__, 'after_submission' ), 10, 2 );
 		add_filter( 'template_redirect', array( __CLASS__, 'render_api_response_html' ), 10, 1 );
@@ -42,42 +41,6 @@ class Gforms_Integration {
 	}
 
 	/**
-	 * Validate the payment amount, show erro message if payment amount is 0.
-	 *
-	 * @since 0.1.0
-	 *
-	 * @param  array $validation_result array that includes validation result and form object.
-	 * @return array
-	 */
-	public static function validate_payment_amount( $validation_result ) {
-		$form  = $validation_result['form'];
-		$entry = \GFFormsModel::get_current_lead();
-
-		// ************************* Payment form check ************************* //
-		if ( ! Helper::is_payment_form( $form ) ) {
-			return $validation_result;
-		}
-
-		$payment_amount = \GFCommon::get_order_total( $form, $entry );
-
-		// If the order total is 0, do not proceed to ePayment gateway.
-		// phpcs:ignore
-		if ( $payment_amount < 0.01 ) {
-			$validation_result['is_valid'] = false;
-
-			foreach ( $form['fields'] as &$field ) {
-				if ( 'product' === $field['type'] ) {
-					$field->failed_validation  = true;
-					$field->validation_message = __( 'In order to proceed, the total must be greater 0. Please select at least one item.', 'ubc-dpp' );
-				}
-			}
-			return $validation_result;
-		}
-
-		return $validation_result;
-	}//end validate_payment_amount()
-
-	/**
 	 * Redirect user to the request payment template.
 	 *
 	 * @since 0.1.0
@@ -99,7 +62,7 @@ class Gforms_Integration {
 		// If the order total is 0, do not proceed to ePayment gateway.
 		// phpcs:ignore
 		if ( (double) 0 === $payment_amount ) {
-			return;
+			wp_die( __( 'The total amount cannot be 0, please select at least one product to checkout.', 'dpp' ) );
 		}
 
 		$prefix                 = defined( 'DPP_PREFIX' ) ? constant( 'DPP_PREFIX' ) : 'ubc';
