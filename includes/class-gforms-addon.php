@@ -139,8 +139,8 @@ class GForms_Addon extends \GFAddon {
 				),
 			),
 			array(
-				'title'      => esc_html__( 'Payment Environment', 'ubc-dpp' ),
-				'fields'     => array(
+				'title'  => esc_html__( 'Payment Environment', 'ubc-dpp' ),
+				'fields' => array(
 					array(
 						'type'          => 'radio',
 						'description'   => wp_kses_post( 'The uPay <em>test</em> environment will allow you to test this form without taking actual payments. Use the <em>production</em> environment when you are ready to take real payments with this form.<br><br>' ),
@@ -186,7 +186,7 @@ class GForms_Addon extends \GFAddon {
 						'type'                => 'text',
 						'class'               => 'small',
 						'required'            => true,
-						'validation_callback' => function( $text_object, $value ) {
+						'validation_callback' => function ( $text_object, $value ) {
 							if ( null === $value ) {
 								return;
 							}
@@ -196,7 +196,7 @@ class GForms_Addon extends \GFAddon {
 								return;
 							}
 
-							if ( ! ( (float) $value >= 4000 && (float) $value <= 4999 ) ) {
+							if ( ! ( (float) $value >= 1105 && (float) $value <= 4500 ) ) {
 								$text_object->set_error( __( 'The value you have entered is not valid, please contact the UBC Digital Payment Processing Team for the correct Ledger Account ID.', 'ubc-dpp' ) );
 								return;
 							}
@@ -205,8 +205,8 @@ class GForms_Addon extends \GFAddon {
 							'field'  => 'ubc_upay_is_workday_override',
 							'values' => 1,
 						),
-						'feedback_callback'   => function( $value ) {
-							return (float) $value >= 4000 && (float) $value <= 4999;
+						'feedback_callback'   => function ( $value ) {
+							return (float) $value >= 1105 && (float) $value <= 4500;
 						},
 					),
 					array(
@@ -216,7 +216,7 @@ class GForms_Addon extends \GFAddon {
 						'type'                => 'text',
 						'class'               => 'small',
 						'required'            => true,
-						'validation_callback' => function( $text_object, $value ) {
+						'validation_callback' => function ( $text_object, $value ) {
 							if ( null === $value ) {
 								return;
 							}
@@ -235,7 +235,7 @@ class GForms_Addon extends \GFAddon {
 							'field'  => 'ubc_upay_is_workday_override',
 							'values' => 1,
 						),
-						'feedback_callback'   => function( $value ) {
+						'feedback_callback'   => function ( $value ) {
 							return false != preg_match( '/^RC([0-9]){4}$/', $value );
 						},
 					),
@@ -246,7 +246,7 @@ class GForms_Addon extends \GFAddon {
 						'type'                => 'text',
 						'class'               => 'small',
 						'required'            => true,
-						'validation_callback' => function( $text_object, $value ) {
+						'validation_callback' => function ( $text_object, $value ) {
 							if ( null === $value ) {
 								return;
 							}
@@ -265,7 +265,7 @@ class GForms_Addon extends \GFAddon {
 							'field'  => 'ubc_upay_is_workday_override',
 							'values' => 1,
 						),
-						'feedback_callback'   => function( $value ) {
+						'feedback_callback'   => function ( $value ) {
 							return false != preg_match( '/^FD([0-9]){3}$/', $value );
 						},
 					),
@@ -276,7 +276,7 @@ class GForms_Addon extends \GFAddon {
 						'type'                => 'text',
 						'class'               => 'small',
 						'required'            => true,
-						'validation_callback' => function( $text_object, $value ) {
+						'validation_callback' => function ( $text_object, $value ) {
 							if ( null === $value ) {
 								return;
 							}
@@ -295,7 +295,7 @@ class GForms_Addon extends \GFAddon {
 							'field'  => 'ubc_upay_is_workday_override',
 							'values' => 1,
 						),
-						'feedback_callback'   => function( $value ) {
+						'feedback_callback'   => function ( $value ) {
 							return false != preg_match( '/^FN([0-9]){3}$/', $value );
 						},
 					),
@@ -306,7 +306,7 @@ class GForms_Addon extends \GFAddon {
 						'type'                => 'text',
 						'class'               => 'small',
 						'required'            => true,
-						'validation_callback' => function( $text_object, $value ) {
+						'validation_callback' => function ( $text_object, $value ) {
 							if ( null === $value ) {
 								return;
 							}
@@ -325,7 +325,7 @@ class GForms_Addon extends \GFAddon {
 							'field'  => 'ubc_upay_is_workday_override',
 							'values' => 1,
 						),
-						'feedback_callback'   => function( $value ) {
+						'feedback_callback'   => function ( $value ) {
 							return false != preg_match( '/^CC([0-9]){5}$/', $value );
 						},
 					),
@@ -340,7 +340,7 @@ class GForms_Addon extends \GFAddon {
 							'field'  => 'ubc_upay_is_workday_override',
 							'values' => 1,
 						),
-						'validation_callback' => function( $text_object, $value ) {
+						'validation_callback' => function ( $text_object, $value ) {
 							if ( null === $value ) {
 								return;
 							}
@@ -354,7 +354,7 @@ class GForms_Addon extends \GFAddon {
 								return;
 							}
 						},
-						'feedback_callback'   => function( $value ) {
+						'feedback_callback'   => function ( $value ) {
 							return false != preg_match( '/^PM([0-9]){6}$/', $value );
 						},
 					),
@@ -365,7 +365,7 @@ class GForms_Addon extends \GFAddon {
 						'description'         => esc_html__( 'If specified, the Program ID must not be provided.', 'ubc-dpp' ),
 						'type'                => 'text',
 						'class'               => 'small',
-						'validation_callback' => function( $text_object, $value ) {
+						'validation_callback' => function ( $text_object, $value ) {
 							if ( null === $value ) {
 								return;
 							}
@@ -383,7 +383,7 @@ class GForms_Addon extends \GFAddon {
 							'field'  => 'ubc_upay_is_workday_override',
 							'values' => 1,
 						),
-						'feedback_callback'   => function( $value ) {
+						'feedback_callback'   => function ( $value ) {
 							return false != preg_match( '/^PJ([0-9]){6}$/', $value );
 						},
 					),
@@ -392,13 +392,13 @@ class GForms_Addon extends \GFAddon {
 		) : array(
 			// uPay Form Settings onboarding warning section.
 			array(
-				'title'       => esc_html__( 'Payments Form Settings', 'ubc-dpp' ),
-				'fields'      => array(
-						array(
-							'label' => '<br><div class="alert gforms_note_warning">Please complete the onboarding at Forms > Settings > Digital Payments before trying to activate a form for use with Digital Payments.</div>',
-							'type'  => 'html_field',
-						),
+				'title'  => esc_html__( 'Payments Form Settings', 'ubc-dpp' ),
+				'fields' => array(
+					array(
+						'label' => '<br><div class="alert gforms_note_warning">Please complete the onboarding at Forms > Settings > Digital Payments before trying to activate a form for use with Digital Payments.</div>',
+						'type'  => 'html_field',
 					),
+				),
 			),
 		);
 	}//end form_settings_fields()
@@ -421,7 +421,7 @@ class GForms_Addon extends \GFAddon {
 			array(
 				'title'       => esc_html__( 'Enable DPP Logging', 'ubc-dpp' ),
 				'description' => wp_kses_post( 'Network Administrators Only: Enabling logging will output information to the dpp-debug.log file in the wp-content directory. It only applies to this site, not network wide. This toggle is not available to site admins.' ),
-				'dependency'  => function() use ( $is_super_admin ) {
+				'dependency'  => function () use ( $is_super_admin ) {
 					return $is_super_admin;
 				},
 				'fields'      => array(
@@ -452,7 +452,7 @@ class GForms_Addon extends \GFAddon {
 			array(
 				'title'       => esc_html__( 'uPay Test Environment Settings', 'ubc-dpp' ),
 				'description' => wp_kses_post( 'Enter the details provided by the UBC Digital Payments Processing Team as part of the onboarding for the uPay <strong>test environment</strong>. These are used when a form is set to use the <strong>test environment</strong> so that you can ensure your form is working as you expect. <em>Note: No actual money will be collected when a form is using the test environment.</em><br><br>' ),
-				'dependency'  => function() {
+				'dependency'  => function () {
 					return ! empty( $this->get_plugin_setting( 'ubc_upay_onboarding_complete' ) );
 				},
 				'class'       => 'gform-settings-panel--half',
@@ -464,7 +464,7 @@ class GForms_Addon extends \GFAddon {
 						'label'             => esc_html__( 'Testing Merchant ID', 'ubc-dpp' ),
 						'type'              => 'text',
 						'class'             => 'small',
-						'feedback_callback' => function( $value ) {
+						'feedback_callback' => function ( $value ) {
 							return false != preg_match( '/^([A-Za-z0-9]){4,10}$/', $value );
 						},
 					),
@@ -474,7 +474,7 @@ class GForms_Addon extends \GFAddon {
 						'label'             => esc_html__( 'Testing Merchant Store ID', 'ubc-dpp' ),
 						'type'              => 'text',
 						'class'             => 'small',
-						'feedback_callback' => function( $value ) {
+						'feedback_callback' => function ( $value ) {
 							return false != preg_match( '/^([0-9]){2}$/', $value );
 						},
 					),
@@ -484,7 +484,7 @@ class GForms_Addon extends \GFAddon {
 						'label'             => esc_html__( 'Testing Merchant Proxy Key', 'ubc-dpp' ),
 						'type'              => 'text',
 						'class'             => 'small',
-						'feedback_callback' => function( $value ) {
+						'feedback_callback' => function ( $value ) {
 							return false != preg_match( '/^[a-f0-9]{30}$/', $value );
 						},
 					),
@@ -494,7 +494,7 @@ class GForms_Addon extends \GFAddon {
 						'label'             => esc_html__( 'Testing Merchant Update Secret', 'ubc-dpp' ),
 						'type'              => 'text',
 						'class'             => 'small',
-						'feedback_callback' => function( $value ) {
+						'feedback_callback' => function ( $value ) {
 							return false != preg_match( '/^[a-f0-9]{30}$/', $value );
 						},
 					),
@@ -504,7 +504,7 @@ class GForms_Addon extends \GFAddon {
 			array(
 				'title'       => esc_html__( 'uPay Production Environment Settings', 'ubc-dpp' ),
 				'description' => wp_kses_post( 'Enter the details provided by the UBC Digital Payments Processing Team as part of the onboarding for the uPay <strong>production environment</strong>. These are used when you want a form to start collecting payments from people. <em>Note: you will still need to set up each form to use the <strong>production environment</strong> in each forms settings.</em><br><br>' ),
-				'dependency'  => function() {
+				'dependency'  => function () {
 					return ! empty( $this->get_plugin_setting( 'ubc_upay_onboarding_complete' ) );
 				},
 				'class'       => 'gform-settings-panel--half',
@@ -517,7 +517,7 @@ class GForms_Addon extends \GFAddon {
 						'type'              => 'text',
 						'class'             => 'small',
 						'readonly'          => $is_cbm_enabled,
-						'feedback_callback' => function( $value ) {
+						'feedback_callback' => function ( $value ) {
 							return false != preg_match( '/^([A-Za-z0-9]){4,10}$/', $value );
 						},
 					),
@@ -528,7 +528,7 @@ class GForms_Addon extends \GFAddon {
 						'type'              => 'text',
 						'class'             => 'small',
 						'readonly'          => $is_cbm_enabled,
-						'feedback_callback' => function( $value ) {
+						'feedback_callback' => function ( $value ) {
 							return false != preg_match( '/^([0-9]){2}$/', $value );
 						},
 					),
@@ -539,7 +539,7 @@ class GForms_Addon extends \GFAddon {
 						'type'              => 'text',
 						'class'             => 'small',
 						'readonly'          => $is_cbm_enabled,
-						'feedback_callback' => function( $value ) {
+						'feedback_callback' => function ( $value ) {
 							return false != preg_match( '/^[a-f0-9]{30}$/', $value );
 						},
 					),
@@ -550,7 +550,7 @@ class GForms_Addon extends \GFAddon {
 						'type'              => 'text',
 						'class'             => 'small',
 						'readonly'          => $is_cbm_enabled,
-						'feedback_callback' => function( $value ) {
+						'feedback_callback' => function ( $value ) {
 							return false != preg_match( '/^[a-f0-9]{30}$/', $value );
 						},
 					),
@@ -619,6 +619,4 @@ class GForms_Addon extends \GFAddon {
 
 		return $fields;
 	}//end plugin_settings_fields()
-
-
 }
