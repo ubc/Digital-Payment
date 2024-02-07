@@ -193,7 +193,7 @@ class Payment_Request {
 				wp_die( new \WP_Error( 'Validaton Failed.', 'Pragram ID and Project ID for Workday Override group [' . ($i+1) . '] are manually exclusive and cannot be provided at the same time.' ) );
 			}
 
-			if ( $ledger_id < 4000 || $ledger_id > 4999 ) {
+			if ( $ledger_id < 1105 || $ledger_id > 4500 ) {
 				// phpcs:ignore
 				wp_die( new \WP_Error( 'Validaton Failed.', 'Ledger ID [' . ($i+1) . '] provided is not valid.' ) );
 			}
@@ -233,9 +233,9 @@ class Payment_Request {
 			$args = array_merge(
 				$args,
 				array(
-					'acct' . $index_string . 'LedgerId' => $ledger_id,
+					'acct' . $index_string . 'LedgerId'   => $ledger_id,
 					'acct' . $index_string . 'RevenueCategoryId' => $revenue_category_id,
-					'acct' . $index_string . 'FundId' => $fund_id,
+					'acct' . $index_string . 'FundId'     => $fund_id,
 					'acct' . $index_string . 'FunctionId' => $function_id,
 					'acct' . $index_string . 'CostCenterId' => $cost_centre_id,
 					// Payment amount current set to the full amount since the index_max_limit is 1. Will need to change accordingly once multiple workday account override is allowed.
@@ -324,6 +324,5 @@ class Payment_Request {
 		Logger::log( 'Bottom of validate_payment_request_data()' );
 
 		return true;
-
 	}//end validate_payment_request_data()
 }
