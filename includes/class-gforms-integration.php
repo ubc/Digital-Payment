@@ -62,7 +62,14 @@ class Gforms_Integration {
 		// If the order total is 0, do not proceed to ePayment gateway.
 		// phpcs:ignore
 		if ( (double) 0 === $payment_amount ) {
-			wp_die( __( 'The total amount cannot be 0, please select at least one product to checkout.', 'dpp' ) );
+			// Save payment_request_number as entry meta.
+			gform_update_meta( $entry['id'], 'payment_request_number', 'N/A' );
+			// Set payment status as Pending.
+			\GFAPI::update_entry_property( $entry['id'], 'payment_status', 'N/A' );
+			// Set payment amount.
+			\GFAPI::update_entry_property( $entry['id'], 'payment_amount', '0' );
+
+			return;
 		}
 
 		$prefix                 = defined( 'DPP_PREFIX' ) ? constant( 'DPP_PREFIX' ) : 'ubc';
