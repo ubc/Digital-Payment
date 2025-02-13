@@ -45,7 +45,6 @@ class Status_Listener {
 				'callback' => array( __CLASS__, 'ubc_epayment_handle_request' ),
 			)
 		);
-
 	}//end ubc_epayment_upay_register_rest_route()
 
 	/**
@@ -69,6 +68,30 @@ class Status_Listener {
 		if ( ! array_key_exists( 'merchantUpdateSecret', $data ) ) {
 			Payment_Logs::log( 'Status Update Listener', array( 'data' => $data ), 'Parameter merchantUpdateSecret is missing.' );
 			return new \WP_Error( '400', esc_html__( 'Parameter merchantUpdateSecret is missing.', 'ubc-dpp' ), array( 'status' => 400 ) );
+		}
+
+		// Check Merchant Update secret.
+		$gforms_addon           = GForms_Addon::get_instance();
+		$form_env               = Helper::get_form_env( $form );
+		$merchant_update_secret = 'test' === $form_env ?
+			( false !== $gforms_addon->get_plugin_setting( 'ubc_upay_merchant_update_secret_test' ) ? sanitize_text_field( $gforms_addon->get_plugin_setting( 'ubc_upay_merchant_update_secret_test' ) ) : '' ) :
+			( false !== $gforms_addon->get_plugin_setting( 'ubc_upay_merchant_update_secret_prod' ) ? sanitize_text_field( $gforms_addon->get_plugin_setting( 'ubc_upay_merchant_update_secret_prod' ) ) : '' );
+
+		if ( $data['merchantUpdateSecret'] !== $merchant_update_secret ) {
+			Payment_Logs::log( 'Status Update Listener', array( 'data' => $data ), 'Merchant Update Secret does not match.' );
+			return new \WP_Error( '401', esc_html__( 'Merchant Update Secret does not match.', 'ubc-dpp' ), array( 'status' => 401 ) );
+		}
+
+		if ( ! array_key_exists( 'paymentStatus', $data ) ) {
+			Payment_Logs::log( 'Status Update Listener', array( 'data' => $data ), 'Parameter paymentStatus is missing.' );
+			return new \WP_Error( '400', esc_html__( 'Parameter paymentStatus is missing.', 'ubc-dpp' ), array( 'status' => 400 ) );
+		}
+
+		$prefix       = defined( 'DPP_PREFIX' ) ? constant( 'DPP_PREFIX' ) : 'ubc';
+		$shortcircuit = apply_filters( 'dpp_payment_status_listener_process_default', true, $data );
+
+		if ( true !== $shortcircuit ) {
+			return $shortcircuit;
 		}
 
 		$payment_request_number = sanitize_title( $data['paymentRequestNumber'] );
@@ -106,28 +129,11 @@ class Status_Listener {
 			return new \WP_Error( '500', esc_html__( 'The form is not a payment form.', 'ubc-dpp' ), array( 'status' => 500 ) );
 		}
 
-		// Check Merchant Update secret.
-		$gforms_addon           = GForms_Addon::get_instance();
-		$form_env               = Helper::get_form_env( $form );
-		$merchant_update_secret = 'test' === $form_env ?
-			( false !== $gforms_addon->get_plugin_setting( 'ubc_upay_merchant_update_secret_test' ) ? sanitize_text_field( $gforms_addon->get_plugin_setting( 'ubc_upay_merchant_update_secret_test' ) ) : '' ) :
-			( false !== $gforms_addon->get_plugin_setting( 'ubc_upay_merchant_update_secret_prod' ) ? sanitize_text_field( $gforms_addon->get_plugin_setting( 'ubc_upay_merchant_update_secret_prod' ) ) : '' );
-
-		if ( $data['merchantUpdateSecret'] !== $merchant_update_secret ) {
-			Payment_Logs::log( 'Status Update Listener', array( 'data' => $data ), 'Merchant Update Secret does not match.' );
-			return new \WP_Error( '401', esc_html__( 'Merchant Update Secret does not match.', 'ubc-dpp' ), array( 'status' => 401 ) );
-		}
-
-		if ( ! array_key_exists( 'paymentStatus', $data ) ) {
-			Payment_Logs::log( 'Status Update Listener', array( 'data' => $data ), 'Parameter paymentStatus is missing.' );
-			return new \WP_Error( '400', esc_html__( 'Parameter paymentStatus is missing.', 'ubc-dpp' ), array( 'status' => 400 ) );
-		}
-
 		/**
 		 * Payment Success.
 		 */
 		if ( 'success' === $data['paymentStatus'] ) {
-			\GFAPI::update_entry_property( $entry['id'], 'payment_status', 'Paid' );
+				\GFAPI::update_entry_property( $entry['id'], 'payment_status', 'Paid' );
 
 			if ( array_key_exists( 'paymentDate', $data ) ) {
 				// ************************* Question for uPay team about timezone ************************* //
@@ -156,13 +162,13 @@ class Status_Listener {
 				gform_update_meta( $entry['id'], 'transaction_id', $data['paymentGatewayReferenceNumber'] );
 			}
 
-			// Get updated entry.
-			$updated_entry = \GFAPI::get_entry( $entry['id'] );
+				// Get updated entry.
+				$updated_entry = \GFAPI::get_entry( $entry['id'] );
 
-			// Send notification email out.
-			remove_filter( 'gform_disable_notification', array( 'UBC\CTLT\DPP\Gforms_Integration', 'disabled_notification_on_form_submit' ), 10 );
-			\GFAPI::send_notifications( $form, $updated_entry, 'form_submission' );
-			add_filter( 'gform_disable_notification', array( 'UBC\CTLT\DPP\Gforms_Integration', 'disabled_notification_on_form_submit' ), 10, 5 );
+				// Send notification email out.
+				remove_filter( 'gform_disable_notification', array( 'UBC\CTLT\DPP\Gforms_Integration', 'disabled_notification_on_form_submit' ), 10 );
+				\GFAPI::send_notifications( $form, $updated_entry, 'form_submission' );
+				add_filter( 'gform_disable_notification', array( 'UBC\CTLT\DPP\Gforms_Integration', 'disabled_notification_on_form_submit' ), 10, 5 );
 
 			Logger::log( 'Bottom of Success' );
 			return new \WP_REST_Response( array( 'payment_request_number' => $payment_request_number ), 200 );
@@ -173,6 +179,7 @@ class Status_Listener {
 		 */
 		if ( 'cancelled' === $data['paymentStatus'] ) {
 			\GFAPI::update_entry_property( $entry['id'], 'payment_status', 'Cancelled' );
+
 			Logger::log( 'Bottom of Cancelled' );
 			return new \WP_REST_Response( array( 'payment_request_number' => $payment_request_number ), 200 );
 		}
@@ -181,6 +188,5 @@ class Status_Listener {
 		Payment_Logs::log( 'Status Update Listener', array( 'data' => $data ), 'Unexpected payment status value' );
 
 		return new \WP_Error( '400', esc_html__( 'Unexpected payment status value.', 'ubc-dpp' ), array( 'status' => 400 ) );
-
 	}//end ubc_epayment_handle_request()
 }

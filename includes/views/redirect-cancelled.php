@@ -14,8 +14,9 @@ if ( ! isset( $_REQUEST['EXT_TRANS_ID'] ) || ! isset( $_REQUEST['UPAY_SITE_ID'] 
 	wp_die( esc_html__( 'You do not have permission to view this page.', 'ubc-dpp' ) );
 }
 
-Redirects::do_confirmaton(
-	sanitize_title( wp_unslash( $_REQUEST['EXT_TRANS_ID'] ) ),
-	'cancelled'
-);
-
+if ( apply_filters( 'ubc_dpp_payment_do_confirmation_cancelled', true, $_REQUEST ) ) {
+	Redirects::do_confirmaton(
+		sanitize_title( wp_unslash( $_REQUEST['EXT_TRANS_ID'] ) ),
+		'cancelled'
+	);
+}
