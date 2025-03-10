@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       UBC ePayment(DPP)
  * Description:       Integration with UBC DPP ePayment gateway (uPay). Digital Payment. e-payment. Requires Gravity Forms.
- * Version:           0.2.7
+ * Version:           0.2.8
  * Requires at least: 5.2
  * Requires PHP:      7.2
  * Author:            Kelvin Xu, Rich Tape
