@@ -50,7 +50,7 @@ class Helper {
 	 * @param Object $form form object.
 	 * @return string
 	 */
-	public static function get_form_env( $form ) {
+	public static function get_form_env( $form = null ) {
 		if ( class_exists( 'UBC_CBM' ) ) {
 			return 'test';
 		}
@@ -58,6 +58,6 @@ class Helper {
 		$gforms_addon = GForms_Addon::get_instance();
 		$settings     = $gforms_addon->get_form_settings( $form );
 
-		return 'prod' === $settings['ubc_upay_form_environment'] ? 'prod' : 'test';
+		return apply_filters( 'ubc_upay_force_environment', 'prod' === $settings['ubc_upay_form_environment'] ? 'prod' : 'test', $form );
 	}//end get_form_env()
 }
