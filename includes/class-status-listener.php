@@ -70,24 +70,6 @@ class Status_Listener {
 			return new \WP_Error( '400', esc_html__( 'Parameter merchantUpdateSecret is missing.', 'ubc-dpp' ), array( 'status' => 400 ) );
 		}
 
-		// Check Merchant Update secret.
-		$gforms_addon           = GForms_Addon::get_instance();
-		$form_env               = Helper::get_form_env( $form );
-		$merchant_update_secret = 'test' === $form_env ?
-			( false !== $gforms_addon->get_plugin_setting( 'ubc_upay_merchant_update_secret_test' ) ? sanitize_text_field( $gforms_addon->get_plugin_setting( 'ubc_upay_merchant_update_secret_test' ) ) : '' ) :
-			( false !== $gforms_addon->get_plugin_setting( 'ubc_upay_merchant_update_secret_prod' ) ? sanitize_text_field( $gforms_addon->get_plugin_setting( 'ubc_upay_merchant_update_secret_prod' ) ) : '' );
-
-		if ( $data['merchantUpdateSecret'] !== $merchant_update_secret ) {
-			Payment_Logs::log( 'Status Update Listener', array( 'data' => $data ), 'Merchant Update Secret does not match.' );
-			return new \WP_Error( '401', esc_html__( 'Merchant Update Secret does not match.', 'ubc-dpp' ), array( 'status' => 401 ) );
-		}
-
-		if ( ! array_key_exists( 'paymentStatus', $data ) ) {
-			Payment_Logs::log( 'Status Update Listener', array( 'data' => $data ), 'Parameter paymentStatus is missing.' );
-			return new \WP_Error( '400', esc_html__( 'Parameter paymentStatus is missing.', 'ubc-dpp' ), array( 'status' => 400 ) );
-		}
-
-		$prefix       = defined( 'DPP_PREFIX' ) ? constant( 'DPP_PREFIX' ) : 'ubc';
 		$shortcircuit = apply_filters( 'dpp_payment_status_listener_process_default', true, $data );
 
 		if ( true !== $shortcircuit ) {
@@ -121,6 +103,25 @@ class Status_Listener {
 		Logger::log( $form_id );
 
 		$form = \GFAPI::get_form( $form_id );
+
+		// Check Merchant Update secret.
+		$gforms_addon           = GForms_Addon::get_instance();
+		$form_env               = Helper::get_form_env( $form );
+		$merchant_update_secret = 'test' === $form_env ?
+			( false !== $gforms_addon->get_plugin_setting( 'ubc_upay_merchant_update_secret_test' ) ? sanitize_text_field( $gforms_addon->get_plugin_setting( 'ubc_upay_merchant_update_secret_test' ) ) : '' ) :
+			( false !== $gforms_addon->get_plugin_setting( 'ubc_upay_merchant_update_secret_prod' ) ? sanitize_text_field( $gforms_addon->get_plugin_setting( 'ubc_upay_merchant_update_secret_prod' ) ) : '' );
+
+		if ( $data['merchantUpdateSecret'] !== $merchant_update_secret ) {
+			Payment_Logs::log( 'Status Update Listener', array( 'data' => $data ), 'Merchant Update Secret does not match.' );
+			return new \WP_Error( '401', esc_html__( 'Merchant Update Secret does not match.', 'ubc-dpp' ), array( 'status' => 401 ) );
+		}
+
+		if ( ! array_key_exists( 'paymentStatus', $data ) ) {
+			Payment_Logs::log( 'Status Update Listener', array( 'data' => $data ), 'Parameter paymentStatus is missing.' );
+			return new \WP_Error( '400', esc_html__( 'Parameter paymentStatus is missing.', 'ubc-dpp' ), array( 'status' => 400 ) );
+		}
+
+		$prefix       = defined( 'DPP_PREFIX' ) ? constant( 'DPP_PREFIX' ) : 'ubc';
 
 		// ************************* Payment form check ************************* //
 		if ( ! Helper::is_payment_form( $form ) ) {
