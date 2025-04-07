@@ -137,7 +137,9 @@ class Gforms_Integration {
 	 * @return bool
 	 */
 	public static function disabled_notification_on_form_submit( $is_diabled, $notification, $form, $entry, $data ) {
-		return Helper::is_payment_form( $form );
+		$payment_amount = \GFCommon::get_order_total( $form, $entry );
+
+		return Helper::is_payment_form( $form ) && (float) 0 < $payment_amount;
 	}//end disabled_notification_on_form_submit()
 
 	/**
