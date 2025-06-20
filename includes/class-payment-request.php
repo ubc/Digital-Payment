@@ -186,6 +186,7 @@ class Payment_Request {
 			$cost_centre_id      = esc_attr( $settings['ubc_upay_cost_centre_id'][ $i ] );
 			$program_id          = esc_attr( $settings['ubc_upay_program_id'][ $i ] );
 			$project_id          = esc_attr( $settings['ubc_upay_project_id'][ $i ] );
+			$activity_code       = esc_attr( $settings['ubc_upay_activity_code'][ $i ] );
 
 			// Check for all-or-nothing accounting override parameter group.
 			if ( ! empty( $program_id ) && ! empty( $project_id ) ) {
@@ -249,6 +250,18 @@ class Payment_Request {
 
 			if ( ! empty( $project_id ) ) {
 				$args[ 'acct' . $index_string . 'ProjectId' ] = $project_id;
+			}
+
+			// Add activity code in lower environment only for testing purposes.
+			if ( 'test' === Helper::get_form_env( $this->form ) ) {
+				if ( ! empty( $activity_code ) ) {
+					if ( false == preg_match( '/^AC([0-9]){6}$/', $activity_code ) ) {
+						// phpcs:ignore
+						wp_die( new \WP_Error( 'Validaton Failed.', 'Activity Code [' . ($i+1) . '] provided is not valid.' ) );
+					} else {
+						$args[ 'acct' . $index_string . 'ActivityCode' ] = $activity_code;
+					}
+				}
 			}
 		}
 

@@ -387,6 +387,34 @@ class GForms_Addon extends \GFAddon {
 							return false != preg_match( '/^PJ([0-9]){6}$/', $value );
 						},
 					),
+					array(
+						'name'                => 'ubc_upay_activity_code[0]',
+						'tooltip'             => esc_html__( 'An Activity Code override in Workday.<br><br>Most Activity Codes are ‘free-floating’ worktags that can be used in conjunction with any driver worktags (such as Program, Project, etc).', 'ubc-dpp' ),
+						'label'               => esc_html__( 'Activity Code', 'ubc-dpp' ),
+						'type'                => 'text',
+						'class'               => 'small',
+						'validation_callback' => function ( $text_object, $value ) {
+							if ( null === $value ) {
+								return;
+							}
+
+							if ( empty( sanitize_text_field( $value ) ) ) {
+								return;
+							}
+
+							if ( false == preg_match( '/^AC([0-9]){6}$/', $value ) ) {
+								$text_object->set_error( __( 'The value you have entered is not valid, please contact the UBC Digital Payment Processing Team for the correct Activity Code.', 'ubc-dpp' ) );
+								return;
+							}
+						},
+						'dependency'          => array(
+							'field'  => 'ubc_upay_is_workday_override',
+							'values' => 1,
+						),
+						'feedback_callback'   => function ( $value ) {
+							return false != preg_match( '/^PJ([0-9]){6}$/', $value );
+						},
+					),
 				),
 			),
 		) : array(
