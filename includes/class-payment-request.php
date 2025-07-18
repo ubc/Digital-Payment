@@ -229,6 +229,11 @@ class Payment_Request {
 				wp_die( new \WP_Error( 'Validaton Failed.', 'Project ID [' . ($i+1) . '] provided is not valid.' ) );
 			}
 
+			if ( ! empty( $activity_code ) && false == preg_match( '/^AC([0-9]){6}$/', $activity_code ) ) {
+				// phpcs:ignore
+				wp_die( new \WP_Error( 'Validaton Failed.', 'Activity Code [' . ($i+1) . '] provided is not valid.' ) );
+			}
+
 			$index_string = str_pad( $i + 1, 2, '0', STR_PAD_LEFT );
 
 			$args = array_merge(
@@ -239,6 +244,7 @@ class Payment_Request {
 					'acct' . $index_string . 'FundId'     => $fund_id,
 					'acct' . $index_string . 'FunctionId' => $function_id,
 					'acct' . $index_string . 'CostCenterId' => $cost_centre_id,
+					'acct' . $index_string . 'ActivityCode' => $activity_code,
 					// Payment amount current set to the full amount since the index_max_limit is 1. Will need to change accordingly once multiple workday account override is allowed.
 					'acct' . $index_string . 'PaymentAmount' => $payment_amount,
 				),
@@ -250,18 +256,6 @@ class Payment_Request {
 
 			if ( ! empty( $project_id ) ) {
 				$args[ 'acct' . $index_string . 'ProjectId' ] = $project_id;
-			}
-
-			// Add activity code in lower environment only for testing purposes.
-			if ( 'test' === Helper::get_form_env( $this->form ) ) {
-				if ( ! empty( $activity_code ) ) {
-					if ( false == preg_match( '/^AC([0-9]){6}$/', $activity_code ) ) {
-						// phpcs:ignore
-						wp_die( new \WP_Error( 'Validaton Failed.', 'Activity Code [' . ($i+1) . '] provided is not valid.' ) );
-					} else {
-						$args[ 'acct' . $index_string . 'ActivityCode' ] = $activity_code;
-					}
-				}
 			}
 		}
 
