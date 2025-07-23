@@ -236,18 +236,24 @@ class Payment_Request {
 
 			$index_string = str_pad( $i + 1, 2, '0', STR_PAD_LEFT );
 
+			$payload = array(
+				'acct' . $index_string . 'LedgerId'   => $ledger_id,
+				'acct' . $index_string . 'RevenueCategoryId' => $revenue_category_id,
+				'acct' . $index_string . 'FundId'     => $fund_id,
+				'acct' . $index_string . 'FunctionId' => $function_id,
+				'acct' . $index_string . 'CostCenterId' => $cost_centre_id,
+				// Payment amount current set to the full amount since the index_max_limit is 1. Will need to change accordingly once multiple workday account override is allowed.
+				'acct' . $index_string . 'PaymentAmount' => $payment_amount,
+			);
+
+			// Optional.
+			if ( ! empty( $activity_code ) ) {
+				$payload[ 'acct' . $index_string . 'ActivityCode' ] = $activity_code;
+			}
+
 			$args = array_merge(
 				$args,
-				array(
-					'acct' . $index_string . 'LedgerId'   => $ledger_id,
-					'acct' . $index_string . 'RevenueCategoryId' => $revenue_category_id,
-					'acct' . $index_string . 'FundId'     => $fund_id,
-					'acct' . $index_string . 'FunctionId' => $function_id,
-					'acct' . $index_string . 'CostCenterId' => $cost_centre_id,
-					'acct' . $index_string . 'ActivityCode' => $activity_code,
-					// Payment amount current set to the full amount since the index_max_limit is 1. Will need to change accordingly once multiple workday account override is allowed.
-					'acct' . $index_string . 'PaymentAmount' => $payment_amount,
-				),
+				$payload
 			);
 
 			if ( ! empty( $program_id ) ) {
